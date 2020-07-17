@@ -11,7 +11,7 @@ provider google {
 }
 
 module "network" {
-  source = "git::https://github.com/dbenedic-insight/tf-gke-101//modules/git/network?refs/heads/main"
+  source = "git::https://github.com/dbenedic-insight/tf-gke-101//modules/git/network?refs=main"
  
   region = var.region
   primary_cidr_range = "192.168.5.0/24"
