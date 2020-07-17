@@ -12,9 +12,9 @@ provider google {
 
 module "network" {
   source = "./network"
- 
-  region = var.region
-  primary_cidr_range = "192.168.5.0/24"
+
+  region               = var.region
+  primary_cidr_range   = "192.168.5.0/24"
   secondary_cidr_range = "192.168.6.0/24"
 }
 

@@ -31,15 +31,15 @@ resource "google_compute_subnetwork" "main" {
 
 output "network" {
   value = {
-    name = google_compute_network.main.name
+    name        = google_compute_network.main.name
     description = google_compute_network.main.description
     primary = {
-      name = google_compute_subnetwork.main.name
+      name  = google_compute_subnetwork.main.name
       range = google_compute_subnetwork.main.ip_cidr_range
     }
     secondary = {
-      name = google_compute_subnetwork.main.secondary_ip_range[0].range_name
-      range = google_compute_subnetwork.main.secondary_ip_range[0].ip_cidr_range 
+      name  = google_compute_subnetwork.main.secondary_ip_range[0].range_name
+      range = google_compute_subnetwork.main.secondary_ip_range[0].ip_cidr_range
     }
   }
 }
