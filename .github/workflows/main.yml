@@ -5,16 +5,13 @@ on:
     branches: [ main ]
   pull_request:
     branches: [ main ]
-    paths:
-      - "gke/**"
-      - ".github/workflows/pr.yml"
 
 env:
   TF_VERSION: 0.12.28
 
 jobs:
   gke:
-    name: Speculative run of GKE Beta cluster infrastructure
+    name: Terraform GKE Beta cluster infrastructure
     runs-on: ubuntu-latest
     defaults:
       run:
@@ -92,6 +89,7 @@ jobs:
 
     - name: Run speculative plan on TFC for ${{ matrix.projects.name }}
       id: plan
+      if: github.event_name == 'pull_request'
       run: terraform plan -no-color -input=false
       env:
         TF_VAR_project_id: ${{ matrix.projects.project_id }}
