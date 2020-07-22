@@ -99,7 +99,7 @@ jobs:
         TF_VAR_compute_engine_service_account: ${{ secrets[matrix.projects.service_account_id_secret_name] }}
 
     - name: Inject speculative plan output as PR comment for ${{ matrix.projects.name }}
-      uses: actions/github-script@2.0.0
+      uses: actions/github-script@v2.0.0
       if: github.event_name == 'pull_request'
       env:
         PLAN: "terraform\n${{ steps.plan.outputs.stdout }}"
