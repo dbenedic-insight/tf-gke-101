@@ -22,7 +22,8 @@ jobs:
         projects:
           - name: daveyb
             project_id: daveyb
-            tfe_workspace_id: gcp-terraform-gke-beta
+            tfe_org_name: cardinalsolutions
+            tfe_workspace_name: gcp-terraform-gke-beta
             tfe_api_uri: https://app.terraform.io
             region: us-east1
             network: default
@@ -50,7 +51,7 @@ jobs:
     - name: Set TFC vars
       run: |
         chmod +x init-tfc-vars.sh
-        ./init-tfc-vars.sh "${{ matrix.projects.tfe_api_uri }}/api/v2/workspaces/${{ matrix.projects.tfe_workspace_id }}/vars" ${{ secrets.TFC_TOKEN }}
+        ./init-tfc-vars.sh ${{ matrix.projects.tfe_api_uri }} ${{ matrix.projects.tfe_org_name }} ${{ matrix.projects.tfe_workspace_name }} ${{ secrets.TFC_TOKEN }}
       working-directory: gke/scripts 
       env:
         TF_VAR_project_id: ${{ matrix.projects.project_id }}
