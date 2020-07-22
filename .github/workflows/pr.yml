@@ -72,7 +72,7 @@ jobs:
             }
           }
         }
-        EOF
+EOF
         ) \
         ${{ matrix.projects.tfe_api_uri }}
  
