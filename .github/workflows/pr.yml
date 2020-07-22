@@ -77,7 +77,7 @@ jobs:
  
     - name: Setup Terraform
       uses: hashicorp/setup-terraform@v1.1.0
-      with
+      with:
         terraform_version: ${{ env.TF_VERSION }}
 
     - name: Terraform Init ${{ matrix.projects.name }}
