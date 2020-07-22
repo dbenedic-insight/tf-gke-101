@@ -28,6 +28,7 @@ function tfc-api-request() {
 }
 
 workspaceid=$(tfc-api-request $tfeapibase $token | jq -r '.data.id')
+tfeapiworkspace="$endpoint/api/v2/workspaces/$workspaceid"
 vars=$(env | grep 'TF_VAR_')
 while IFS=$'\t' read -r var
 do
@@ -50,5 +51,5 @@ do
 EOF
   )
   payload=$(echo $payload | jq -c '.')
-  tfc-api-request "$tfeapibase/vars" $token $payload
+  tfc-api-request "$tfeapiworkspace/vars" $token $payload
 done <<< "$vars"
