@@ -1,13 +1,13 @@
-network = "default"
-subnetwork = "default"
-ip_range_pods = ""
-ip_range_services = ""
-skip_provisioners = true
-istio = true
-cloudrun = true
-dns_cache = false
-gce_pd_csi_driver = false
-sandbox_enabled = false
+network                  = "default"
+subnetwork               = "default"
+ip_range_pods            = ""
+ip_range_services        = ""
+skip_provisioners        = true
+istio                    = true
+cloudrun                 = true
+dns_cache                = false
+gce_pd_csi_driver        = false
+sandbox_enabled          = false
 remove_default_node_pool = false
 node_pools = [
   {
@@ -16,7 +16,7 @@ node_pools = [
 ]
 database_encryption = [
   {
-    state = "DECRYPTED"
+    state    = "DECRYPTED"
     key_name = ""
   }
 ]
@@ -26,5 +26,5 @@ pod_security_policy_config = [
     enabled = false
   }
 ]
-zones = []
+zones    = []
 regional = true
