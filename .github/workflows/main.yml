@@ -64,7 +64,7 @@ jobs:
         TF_VAR_istio: ${{ matrix.projects.istio }}
         TF_VAR_cloudrun: ${{ matrix.projects.cloudrun }}
         TF_VAR_skip_provisioners: ${{ matrix.projects.skip_provisioners }}
-        TF_SECRET_GOOGLE_CREDENTIALS: ${{ secrets[matrix.projects.service_account_credential_secret_name] }}
+        TF_SECRET_ENV_GOOGLE_CREDENTIALS: ${{ secrets[matrix.projects.service_account_credential_secret_name] }}
     
     - name: Setup Terraform
       uses: hashicorp/setup-terraform@v1.1.0

@@ -54,10 +54,10 @@ EOF
   tfc-api-request "$tfcapiworkspace/vars" $token $payload
 done <<< "$vars"
 
-secrets=$(env | grep 'TF_SECRET_')
+secrets=$(env | grep 'TF_SECRET_ENV_')
 while IFS=$'\t' read -r var
 do
-  name=$(echo $var | awk -F= '{print $1}' | sed 's/TF_SECRET_//')
+  name=$(echo $var | awk -F= '{print $1}' | sed 's/TF_SECRET_ENV_//')
   value=$(echo $var | awk -F= '{print $2}')
   payload=$(cat <<- EOF
   {
@@ -67,7 +67,7 @@ do
         "key":"$name",
         "value":"$value",
         "description":"",
-        "category":"terraform",
+        "category":"env",
         "hcl":false,
         "sensitive":"true"
       }
