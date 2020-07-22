@@ -50,7 +50,7 @@ jobs:
         --header "Authorization: Bearer ${{ secrets.TFC_TOKEN }}" \
         --header "Content-Type: application/vns.api+json" \
         --request POST \
-        --data $(cat <<- EOF
+        --data '$(cat <<- EOF
         {
           "data": {
             "type":"vars",
@@ -72,8 +72,7 @@ jobs:
             }
           }
         }
-EOF
-        ) \
+        EOF)' \
         ${{ matrix.projects.tfe_api_uri }}
  
     - name: Setup Terraform
