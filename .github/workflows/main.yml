@@ -50,7 +50,7 @@ jobs:
     - name: Set TFC vars
       run: |
         chmod +x init-tfc-vars.sh
-        ./init-tfc-vars.sh "${{ tfe_api_uri }}/api/v2/workspaces/${{ matrix.projects.tfe_workspace_id }}" ${{ secrets.TFC_TOKEN }}
+        ./init-tfc-vars.sh "${{ matrix.projects.tfe_api_uri }}/api/v2/workspaces/${{ matrix.projects.tfe_workspace_id }}" ${{ secrets.TFC_TOKEN }}
       working-directory: gke/scripts 
       env:
         TF_VAR_project_id: ${{ matrix.projects.project_id }}
@@ -91,38 +91,6 @@ jobs:
         EOF)' \
         ${{ matrix.projects.tfe_api_uri }}
     
-    - name: Push TF_VARs to Workspace ${{ matrix.projects.tfe_workspace_id }}
-      run: |
-        curl \
-        --header "Authorization: Bearer ${{ secrets.TFC_TOKEN }}" \
-        --header "Content-Type: application/vns.api+json" \
-        --request POST \
-        --data '$(cat <<- EOF
-        {
-          "data": {
-            "type":"vars",
-            "attributes": {
-              "key":"GOOGLE_CREDENTIALS",
-              "value":"${{ secrets[matrix.projects.service_account_credential_secret_name] }}"
-              "description":"",
-              "category":"terraform",
-              "hcl":false,
-              "sensitive":false
-            },
-            "relationships": {
-              "workspace": {
-                "data": {
-                  "id":"${{ matrix.projects.tfe_workspace_id }}",
-                  "type":"workspaces"
-                }
-              }
-            }
-          }
-        }
-        EOF)' \
-        ${{ matrix.projects.tfe_api_uri }}
-      
- 
     - name: Setup Terraform
       uses: hashicorp/setup-terraform@v1.1.0
       with:
