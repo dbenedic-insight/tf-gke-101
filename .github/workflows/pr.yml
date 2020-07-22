@@ -1,4 +1,4 @@
-name: gke-beta
+name: pr
 
 on:
   pull_request:
