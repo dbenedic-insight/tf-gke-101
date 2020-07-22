@@ -30,6 +30,7 @@ jobs:
             subnetwork: default
             istio: true 
             cloudrun: false
+            skip_provisioners: true
             service_account_id_secret_name: DAVEYB_SA
             service_account_credential_secret_name: DAVEYB_SA_CREDENTIALS
 
@@ -62,37 +63,8 @@ jobs:
         TF_VAR_compute_engine_service_account: ${{ secrets[matrix.projects.service_account_id_secret_name] }}
         TF_VAR_istio: ${{ matrix.projects.istio }}
         TF_VAR_cloudrun: ${{ matrix.projects.cloudrun }}
-    
-    - name: Push GOOGLE_CREDENTIALS to Workspace ${{ matrix.projects.tfe_workspace_id }} as secret
-      run: |
-        curl \
-        --header "Authorization: Bearer ${{ secrets.TFC_TOKEN }}" \
-        --header "Content-Type: application/vns.api+json" \
-        --request POST \
-        --data '$(cat <<- EOF
-        {
-          "data": {
-            "type":"vars",
-            "attributes": {
-              "key":"GOOGLE_CREDENTIALS",
-              "value":"${{ secrets[matrix.projects.service_account_credential_secret_name] }}"
-              "description":"",
-              "category":"terraform",
-              "hcl":false,
-              "sensitive":true
-            },
-            "relationships": {
-              "workspace": {
-                "data": {
-                  "id":"${{ matrix.projects.tfe_workspace_id }}",
-                  "type":"workspaces"
-                }
-              }
-            }
-          }
-        }
-        EOF)' \
-        ${{ matrix.projects.tfe_api_uri }}
+        TF_VAR_skip_provisioners: ${{ matrix.projects.skip_provisioners }}
+        TF_SECRET_ENV_GOOGLE_CREDENTIALS: ${{ secrets[matrix.projects.service_account_credential_secret_name] }}
     
     - name: Setup Terraform
       uses: hashicorp/setup-terraform@v1.1.0
