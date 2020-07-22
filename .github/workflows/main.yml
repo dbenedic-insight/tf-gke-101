@@ -50,7 +50,7 @@ jobs:
     - name: Set TFC vars
       run: |
         chmod +x init-tfc-vars.sh
-        ./init-tfc-vars.sh "${{ matrix.projects.tfe_api_uri }}/api/v2/workspaces/${{ matrix.projects.tfe_workspace_id }}" ${{ secrets.TFC_TOKEN }}
+        ./init-tfc-vars.sh "${{ matrix.projects.tfe_api_uri }}/api/v2/workspaces/${{ matrix.projects.tfe_workspace_id }}/vars" ${{ secrets.TFC_TOKEN }}
       working-directory: gke/scripts 
       env:
         TF_VAR_project_id: ${{ matrix.projects.project_id }}
@@ -99,19 +99,11 @@ jobs:
     - name: Terraform Init ${{ matrix.projects.name }}
       id: init
       run: terraform init -no-color -input=false
-      env:
-        TF_VAR_project_id: ${{ matrix.projects.project_id }}
-        TF_VAR_region: ${{ matrix.projects.region }}
-        TF_VAR_compute_engine_service_account: ${{ secrets[matrix.projects.service_account_id_secret_name] }}
 
     - name: Run speculative plan on TFC for ${{ matrix.projects.name }}
       id: plan
       if: github.event_name == 'pull_request'
       run: terraform plan -no-color -input=false
-      env:
-        TF_VAR_project_id: ${{ matrix.projects.project_id }}
-        TF_VAR_region: ${{ matrix.projects.region }}
-        TF_VAR_compute_engine_service_account: ${{ secrets[matrix.projects.service_account_id_secret_name] }}
 
     - name: Inject speculative plan output as PR comment for ${{ matrix.projects.name }}
       uses: actions/github-script@v2.0.0
@@ -146,7 +138,3 @@ jobs:
       if: github.event_name == 'push'
       id: apply
       run: terraform apply -auto-approve -no-color -input=false
-      env:
-        TF_VAR_project_id: ${{ matrix.projects.project_id }}
-        TF_VAR_region: ${{ matrix.projects.region }}
-        TF_VAR_compute_engine_service_account: ${{ secrets[matrix.projects.service_account_id_secret_name] }}

@@ -3,6 +3,8 @@
 endpoint=$1
 token=$2
 
+echo "Endpoint: $endpoint"
+
 function tfc-api-request() {
   endpoint=$1
   token=$2
