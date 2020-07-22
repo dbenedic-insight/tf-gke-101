@@ -23,8 +23,12 @@ jobs:
           - name: daveyb
             project_id: daveyb
             tfe_workspace_id: gcp-terraform-gke-beta
-            tfe_api_uri: https://app.terraform.io/api/v2/vars
+            tfe_api_uri: https://app.terraform.io
             region: us-east1
+            network: default
+            subnetwork: default
+            istio: true 
+            cloudrun: false
             service_account_id_secret_name: DAVEYB_SA
             service_account_credential_secret_name: DAVEYB_SA_CREDENTIALS
 
@@ -43,7 +47,20 @@ jobs:
         }
         EOF
 
-    - name: Push GOOGLE_CREDENTIALS to Workspace as secret
+    - name: Set TFC vars
+      run: |
+        chmod +x init-tfc-vars.sh
+        ./init-tfc-vars.sh "${{ tfe_api_uri }}/api/v2/workspaces/${{ tfe_workspace_id }}" ${{ secrets.TFC_TOKEN }}
+      working-directory: gke/scripts 
+      env:
+        TF_VAR_project_id: ${{ matrix.projects.project_id }}
+        TF_VAR_region: ${{ matrix.projects.region }}
+        TF_VAR_cluster_name: "${{ matrix.projects.project_id }}-${{ matrix.projects.region }}-public-cluster"
+        TF_VAR_compute_engine_service_account: ${{ secrets[matrix.projects.service_account_id_secret_name] }}
+        TF_VAR_istio: ${{ matrix.projects.istio }}
+        TF_VAR_cloudrun: ${{ matrix.projects.cloudrun }}
+    
+    - name: Push GOOGLE_CREDENTIALS to Workspace ${{ matrix.projects.tfe_workspace_id }} as secret
       run: |
         curl \
         --header "Authorization: Bearer ${{ secrets.TFC_TOKEN }}" \
@@ -73,6 +90,38 @@ jobs:
         }
         EOF)' \
         ${{ matrix.projects.tfe_api_uri }}
+    
+    - name: Push TF_VARs to Workspace ${{ matrix.projects.tfe_workspace_id }}
+      run: |
+        curl \
+        --header "Authorization: Bearer ${{ secrets.TFC_TOKEN }}" \
+        --header "Content-Type: application/vns.api+json" \
+        --request POST \
+        --data '$(cat <<- EOF
+        {
+          "data": {
+            "type":"vars",
+            "attributes": {
+              "key":"GOOGLE_CREDENTIALS",
+              "value":"${{ secrets[matrix.projects.service_account_credential_secret_name] }}"
+              "description":"",
+              "category":"terraform",
+              "hcl":false,
+              "sensitive":false
+            },
+            "relationships": {
+              "workspace": {
+                "data": {
+                  "id":"${{ matrix.projects.tfe_workspace_id }}",
+                  "type":"workspaces"
+                }
+              }
+            }
+          }
+        }
+        EOF)' \
+        ${{ matrix.projects.tfe_api_uri }}
+      
  
     - name: Setup Terraform
       uses: hashicorp/setup-terraform@v1.1.0

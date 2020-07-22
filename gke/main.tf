@@ -2,7 +2,7 @@ module "gke" {
   source                      = "app.terraform.io/cardinalsolutions/kubernetes-engine/google//modules/beta-public-cluster"
   version                     = "9.2.0"
   project_id                  = var.project_id
-  name                        = "${var.region}-simple-regional-beta"
+  name                        = var.cluster_name
   regional                    = var.regional
   region                      = var.region
   zones                       = var.zones

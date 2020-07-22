@@ -1,10 +1,7 @@
 #!/bin/bash
-rootpath=$(cd "$(dirname "$0")"; pwd -P)
-tokenpath=~/.terraformrc
-varspath=gke-beta-vars.json
-tfcorg=cardinalsolutions
-tfcws=gcp-terraform-gke-beta
-tfcapibase="https://app.terraform.io/api/v2/organizations/$tfcorg/workspaces/$tfcws"
+
+endpoint=$1
+token=$2
 
 function tfc-api-request() {
   endpoint=$1
@@ -26,15 +23,11 @@ function tfc-api-request() {
   $endpoint
 }
 
-token=$(cat $tokenpath | jq -r '.credentials["app.terraform.io"].token')
-workspaceid=$(tfc-api-request $tfcapibase $token | jq -r '.data.id')
-
-cd "$rootpath"
-vars=$(jq -r '.vars[] | [.name, .value] | @tsv' $varspath)
+vars=$(env | grep 'TF_VAR_')
 while IFS=$'\t' read -r var
 do
-  name=$(echo $var | awk '{print $1}')
-  value=$(echo $var | awk '{print $2}')
+  name=$(echo $var | awk -F= '{print $1}')
+  value=$(echo $var | awk -F= '{print $2}')
   payload=$(cat <<- EOF
   {
     "data": {
@@ -45,20 +38,12 @@ do
         "description":"",
         "category":"terraform",
         "hcl":false,
-        "sensitive":false
-      },
-      "relationships": {
-        "workspace": {
-          "data": {
-            "id":"$workspaceid",
-            "type":"workspaces"
-          }
-        }
+        "sensitive":"$false"
       }
     }
   }
-EOF
+  EOF
   )
   payload=$(echo $payload | jq -c '.')
-  tfc-api-request https://app.terraform.io/api/v2/vars $token $payload
+  tfc-api-request $endpoint $token $payload
 done <<< "$vars"
