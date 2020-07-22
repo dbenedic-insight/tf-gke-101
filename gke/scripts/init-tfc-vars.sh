@@ -32,7 +32,7 @@ tfeapiworkspace="$endpoint/api/v2/workspaces/$workspaceid"
 vars=$(env | grep 'TF_VAR_')
 while IFS=$'\t' read -r var
 do
-  name=$(echo $var | awk -F= '{print $1}')
+  name=$(echo $var | awk -F= '{print $1}' | 's/TF_VAR_//')
   value=$(echo $var | awk -F= '{print $2}')
   payload=$(cat <<- EOF
   {
