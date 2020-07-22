@@ -44,7 +44,7 @@ do
         "description":"",
         "category":"terraform",
         "hcl":false,
-        "sensitive":"$false"
+        "sensitive":"false"
       }
     }
   }
