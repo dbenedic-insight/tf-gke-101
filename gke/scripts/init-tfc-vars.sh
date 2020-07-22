@@ -5,7 +5,7 @@ orgname=$2
 workspacename=$3
 token=$4
 
-tfeapibase="$endpoint/api/v2/organizations/$orgname/workspaces/$workspacename"
+tfcapibase="$endpoint/api/v2/organizations/$orgname/workspaces/$workspacename"
 
 function tfc-api-request() {
   endpoint=$1
@@ -27,8 +27,8 @@ function tfc-api-request() {
   $endpoint
 }
 
-workspaceid=$(tfc-api-request $tfeapibase $token | jq -r '.data.id')
-tfeapiworkspace="$endpoint/api/v2/workspaces/$workspaceid"
+workspaceid=$(tfc-api-request $tfcapibase $token | jq -r '.data.id')
+tfcapiworkspace="$endpoint/api/v2/workspaces/$workspaceid"
 vars=$(env | grep 'TF_VAR_')
 while IFS=$'\t' read -r var
 do
@@ -51,5 +51,30 @@ do
 EOF
   )
   payload=$(echo $payload | jq -c '.')
-  tfc-api-request "$tfeapiworkspace/vars" $token $payload
+  tfc-api-request "$tfcapiworkspace/vars" $token $payload
 done <<< "$vars"
+
+secrets=$(env | grep 'TF_SECRET_')
+while IFS=$'\t' read -r var
+do
+  name=$(echo $var | awk -F= '{print $1}' | sed 's/TF_SECRET_//')
+  value=$(echo $var | awk -F= '{print $2}')
+  payload=$(cat <<- EOF
+  {
+    "data": {
+      "type":"vars",
+      "attributes": {
+        "key":"$name",
+        "value":"$value",
+        "description":"",
+        "category":"terraform",
+        "hcl":false,
+        "sensitive":"true"
+      }
+    }
+  }
+EOF
+  )
+  payload=$(echo $payload | jq -c '.')
+  tfc-api-request "$tfcapiworkspace/vars" $token $payload
+done <<< "$secrets"
