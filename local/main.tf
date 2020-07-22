@@ -6,8 +6,8 @@ terraform {
 }
 
 provider google {
-  project = var.project_id
-  region  = var.region
+  project = "daveyb"
+  region  = "us-east1"
 }
 
 resource "google_compute_network" "main" {
@@ -19,7 +19,7 @@ resource "google_compute_network" "main" {
 
 resource "google_compute_subnetwork" "main" {
   name          = "subnet-1a"
-  region        = var.region
+  region        = "us-east1"
   ip_cidr_range = "192.168.5.0/24"
   network       = google_compute_network.main.self_link
 

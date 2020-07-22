@@ -3,8 +3,13 @@ name: main
 on:
   push:
     branches: [ main ]
+    paths:
+      - "gke/**"
   pull_request:
     branches: [ main ]
+    paths:
+      - "gke/**"
+  
 
 env:
   TF_VERSION: 0.12.28
