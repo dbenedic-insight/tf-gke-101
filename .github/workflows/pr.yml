@@ -45,10 +45,10 @@ jobs:
         EOF
 
     - name: Push GOOGLE_CREDENTIALS to Workspace as secret
-      run: |
-        curl \
-        --header "Authorization: Bearer ${{ secrets.TFC_TOKEN }}" \
-        --header "Content-Type: application/vns.api+json" \
+      run:
+        curl
+        --header "Authorization: Bearer ${{ secrets.TFC_TOKEN }}"
+        --header "Content-Type: application/vns.api+json"
         --request POST
         --data <<- EOF
         {
@@ -72,7 +72,7 @@ jobs:
             }
           }
         }
-        EOF \
+        EOF
         ${{ matrix.projects.tfe_api_uri }}
  
     - name: Setup Terraform
