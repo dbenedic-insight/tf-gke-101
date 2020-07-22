@@ -42,7 +42,7 @@ do
       }
     }
   }
-  EOF
+EOF
   )
   payload=$(echo $payload | jq -c '.')
   tfc-api-request $endpoint $token $payload
