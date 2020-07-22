@@ -50,7 +50,7 @@ jobs:
     - name: Set TFC vars
       run: |
         chmod +x init-tfc-vars.sh
-        ./init-tfc-vars.sh "${{ tfe_api_uri }}/api/v2/workspaces/${{ tfe_workspace_id }}" ${{ secrets.TFC_TOKEN }}
+        ./init-tfc-vars.sh "${{ tfe_api_uri }}/api/v2/workspaces/${{ matrix.projects.tfe_workspace_id }}" ${{ secrets.TFC_TOKEN }}
       working-directory: gke/scripts 
       env:
         TF_VAR_project_id: ${{ matrix.projects.project_id }}
