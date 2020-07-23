@@ -29,3 +29,4 @@ module "gke" {
   identity_namespace = null
   node_metadata      = "UNSPECIFIED"
 }
+
